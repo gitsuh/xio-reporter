@@ -1,3 +1,36 @@
+/* Name Sorting */
+function sortByName(a,b){
+//https://code.vmware.com/samples/1904/sort-array-of-vc-datastore-objects
+    var dsA = a['content']['name'];
+    var dsB = b['content']['name'];
+    if(dsA == dsB){
+        return 0;
+    }else if(dsA==null){
+        return 1;
+    }else if(dsB==null){
+        return -1;
+    }else{
+        var dsALength = dsA.length;
+        var dsBLength = dsB.length;
+        if(dsALength > dsBLength){
+            var maxLength = dsALength;
+        }else{
+            var maxLength = dsBLength;
+        }
+        for(var i=0; i<maxLength; i++){
+            if(dsA.charAt(i) != dsB.charAt(i)){
+                if(dsA.charAt(i) < dsB.charAt(i)){
+                    return -1;
+                }else{
+                    return 1;
+                }
+            }   
+        }
+    }
+}
+
+
+
 function domyrestcall(queryString) {
 	var baseUrl = att_base_uri;
 	var user = att_username;
@@ -45,7 +78,7 @@ function domyrestcall(queryString) {
 }
 
 var apisplitstring = "json/v2"
-
+var throttle = 50;
 var	query = "";
 var parsedjson = "";
 
@@ -68,7 +101,7 @@ var parsedjson = "";
 		arrayoftargets.push(parsedjson);
 		//System.log(arrayoftargets[0]);
 		//throw "test done"
-		System.sleep(200);
+		System.sleep(throttle);
 	}
 
 /*
@@ -91,7 +124,7 @@ var parsedjson = "";
 		arrayofxenvs.push(parsedjson);
 	//	System.log(arrayofxenvs[0]);
 		//throw "test done"
-		System.sleep(500);
+		System.sleep(throttle);
 	}
 
 /*
@@ -113,29 +146,53 @@ var parsedjson = "";
 		arrayofxms.push(parsedjson);
 		//System.log(arrayofxms[0]);
 		//throw "test done"
-		System.sleep(200);
+		System.sleep(throttle);
 	}
-
+var masterreport = "";
+var line = "";
 System.log("targets output:");
 //parse target objects
+arrayoftargets.sort(sortByName);
 for (var i = 0; i < arrayoftargets.length; i++){
-
-	System.log("node: " + arrayoftargets[i]['content']['name']);
-	System.log("iops: " + arrayoftargets[i]['content']['iops']);
-	System.log("bw: " + arrayoftargets[i]['content']['bw']);
+	if(arrayoftargets[i]['content']['name'].search("iscsi") == -1){
+		line = "name: " + arrayoftargets[i]['content']['name'];
+		line += " iops: " + arrayoftargets[i]['content']['iops']
+		line += " bw: " + arrayoftargets[i]['content']['bw']
+		masterreport += line + "<br>";
+		System.log("node: " + arrayoftargets[i]['content']['name']);
+		System.log("iops: " + arrayoftargets[i]['content']['iops']);
+		System.log("bw: " + arrayoftargets[i]['content']['bw']);
+	}
 }
 
 System.log("xenvs output:");
 //parse xenvs objects
+arrayofxenvs.sort(sortByName);
 for (var i = 0; i < arrayofxenvs.length; i++){
+	line = "name: " + arrayofxenvs[i]['content']['name'];
+	line += " cpu-usage: " + arrayofxenvs[i]['content']['cpu-usage'];
+	masterreport += line + "<br>";
 	System.log("name: " + arrayofxenvs[i]['content']['name']);
 	System.log("cpu-usage: " + arrayofxenvs[i]['content']['cpu-usage']);
 }
 
 System.log("xms output:");
 //parse xms objects
+arrayofxms.sort(sortByName);
 for (var i = 0; i < arrayofxms.length; i++){
+/*
+	line =  "ram-total: " + arrayofxms[i]['content']['ram-total'];
+	line +=	" ram-usage: " + arrayofxms[i]['content']['ram-usage'];
+	line +=	" memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level'];
+	masterreport += line + "<br>";
+*/	
+	masterreport +=  "ram-total: " + arrayofxms[i]['content']['ram-total'];
+	masterreport +=	" ram-usage: " + arrayofxms[i]['content']['ram-usage'];
+	masterreport +=	" memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level'];
 	System.log("ram-total: " + arrayofxms[i]['content']['ram-total']);
 	System.log("ram-usage: " + arrayofxms[i]['content']['ram-usage']);
 	System.log("memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level']);
 }
+
+att_email_message = masterreport;
+
