@@ -186,9 +186,9 @@ for (var i = 0; i < arrayofxms.length; i++){
 	line +=	" memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level'];
 	masterreport += line + "<br>";
 */	
-	masterreport +=  "ram-total: " + arrayofxms[i]['content']['ram-total'];
-	masterreport +=	" ram-usage: " + arrayofxms[i]['content']['ram-usage'];
-	masterreport +=	" memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level'];
+	masterreport +=  "ram-total: " + arrayofxms[i]['content']['ram-total'] + "<br>";
+	masterreport +=	" ram-usage: " + arrayofxms[i]['content']['ram-usage'] + "<br>";
+	masterreport +=	" memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level'] + "<br>";
 	System.log("ram-total: " + arrayofxms[i]['content']['ram-total']);
 	System.log("ram-usage: " + arrayofxms[i]['content']['ram-usage']);
 	System.log("memory-utilization-level: " + arrayofxms[i]['content']['memory-utilization-level']);
